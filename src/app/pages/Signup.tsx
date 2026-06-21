@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import instance from "../services/axiosinstance";
 import { APIs } from "../services/APIs";
 import Swal from "sweetalert2";
-import MoonLoader from "react-spinners/MoonLoader";
+import { MoonLoader } from "react-spinners";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -16,17 +16,17 @@ const Signup = () => {
     password: Yup.string().required("Password is required"),
   });
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: any, { setSubmitting }: any) => {
     try {
       await instance.post(`${APIs.authServiceApi}/signup`, values);
-      Swal.fire(
-        "Success",
-        "Signup successful. Login details sent to your email.",
-        "success",
-      );
-      navigate("/");
+
+      Swal.fire("Success", "Signup successful. Please login.", "success");
+
+      navigate("/login");
     } catch (error: any) {
       Swal.fire("Error", error?.response?.data || "Signup failed", "error");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -87,7 +87,7 @@ const Signup = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-green-600 text-white py-2 rounded mt-6 flex items-center justify-center"
+              className="w-full bg-green-600 text-white py-2 rounded mt-6 flex items-center justify-center disabled:opacity-70"
             >
               {isSubmitting ? (
                 <MoonLoader color="#ffffff" size={20} />
