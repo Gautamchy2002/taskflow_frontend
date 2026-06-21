@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import instance from "../services/axiosinstance";
 import { APIs } from "../services/APIs";
 import Swal from "sweetalert2";
+import MoonLoader from "react-spinners/MoonLoader";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -86,9 +87,13 @@ const Signup = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-green-600 text-white py-2 rounded mt-6"
+              className="w-full bg-green-600 text-white py-2 rounded mt-6 flex items-center justify-center"
             >
-              Signup
+              {isSubmitting ? (
+                <MoonLoader color="#ffffff" size={20} />
+              ) : (
+                "Signup"
+              )}
             </button>
 
             <p className="text-center text-sm mt-4">
