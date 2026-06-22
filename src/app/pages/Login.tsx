@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
@@ -6,10 +7,13 @@ import instance from "../services/axiosinstance";
 import { APIs } from "../services/APIs";
 import { setAuthData } from "../services/redux/slice/authSlice";
 import Swal from "sweetalert2";
+import { MoonLoader } from "react-spinners";
+import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const validationSchema = Yup.object({
     username: Yup.string().required("Username is required"),
@@ -61,12 +65,23 @@ const Login = () => {
               <p className="text-red-500 text-sm mt-1">{errors.username}</p>
             )}
 
-            <Field
-              name="password"
-              type="password"
-              placeholder="Password"
-              className="w-full border px-4 py-2 rounded mt-4"
-            />
+            <div className="relative mt-4">
+              <Field
+                name="password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                className="w-full border px-4 py-2 pr-11 rounded"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+
             {errors.password && touched.password && (
               <p className="text-red-500 text-sm mt-1">{errors.password}</p>
             )}
@@ -81,9 +96,16 @@ const Login = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-blue-600 text-white py-2 rounded mt-6"
+              className="w-full bg-blue-600 text-white py-2 rounded mt-6 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Login
+              {isSubmitting ? (
+                <>
+                  <MoonLoader size={18} color="#ffffff" />
+                  Logging in...
+                </>
+              ) : (
+                "Login"
+              )}
             </button>
 
             <p className="text-center text-sm mt-4">

@@ -40,6 +40,7 @@ const Tasks = () => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [editData, setEditData] = useState<Task | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [priorityFilter, setPriorityFilter] = useState("ALL");
@@ -76,12 +77,16 @@ const Tasks = () => {
 
     if (!confirm.isConfirmed) return;
 
+    setDeletingId(id);
+
     try {
       await instance.delete(`${APIs.taskServiceApi}/delete/${id}`);
       Swal.fire("Deleted", "Task deleted successfully", "success");
       getTasks();
     } catch (error: any) {
       Swal.fire("Error", error?.response?.data || "Delete failed", "error");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -271,8 +276,14 @@ const Tasks = () => {
                         <Button
                           variant="destructive"
                           onClick={() => deleteTask(task.id)}
+                          disabled={deletingId === task.id}
+                          className="min-w-[72px]"
                         >
-                          Delete
+                          {deletingId === task.id ? (
+                            <MoonLoader size={16} color="#fff" />
+                          ) : (
+                            "Delete"
+                          )}
                         </Button>
                       </div>
                     </TableCell>
@@ -331,8 +342,13 @@ const Tasks = () => {
                   variant="destructive"
                   className="w-full mt-4"
                   onClick={() => deleteTask(task.id)}
+                  disabled={deletingId === task.id}
                 >
-                  Delete
+                  {deletingId === task.id ? (
+                    <MoonLoader size={16} color="#fff" />
+                  ) : (
+                    "Delete"
+                  )}
                 </Button>
               </div>
             ))}
